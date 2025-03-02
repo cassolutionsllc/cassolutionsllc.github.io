@@ -14,10 +14,11 @@
             padding: 20px;
             background-color: #f5f7fa;
                 .owner-shares {
-            font-size: 11px;
-            color: #7f8c8d;
-            margin-top: 5px;
+            font-size: 13px;
+            color: #34495e;
+            margin: 10px 0 15px;
             text-align: center;
+            font-weight: 500;
         }
         
         h1, h2, h3 {
@@ -324,7 +325,7 @@
                         
                         <div class="param-group">
                             <label for="monthCount">Number of Months:</label>
-                            <input type="number" id="monthCount" value="12" min="1" max="36" step="1">
+                            <input type="number" id="monthCount" value="18" min="1" max="36" step="1">
                         </div>
                         
                         <div class="param-group">
@@ -366,7 +367,6 @@
                         <div class="stat-card">
                             <div class="stat-title">Total CAS Revenue</div>
                             <div class="stat-value" id="totalCASRevenue">$0</div>
-                            <div class="owner-shares" id="ownerShares">A: $0 (38.46%), C: $0 (38.46%), S: $0 (23.07%)</div>
                         </div>
                         
                         <div class="stat-card">
@@ -389,6 +389,8 @@
                             <div class="stat-value" id="currentBonusAccrual">$0</div>
                         </div>
                     </div>
+                    
+                    <div class="owner-shares" id="ownerShares">CAS Owner Distribution: A: $0 (38.46%), C: $0 (38.46%), S: $0 (23.07%)</div>
                 </div>
                 
                 <!-- New Chart Section -->
@@ -881,7 +883,7 @@
                 const ownerC = totalCASRevenue * 0.3846;
                 const ownerS = totalCASRevenue * 0.2307;
                 document.getElementById('ownerShares').innerHTML = 
-                    `A: ${formatCurrency(ownerA)} (38.46%), C: ${formatCurrency(ownerC)} (38.46%), S: ${formatCurrency(ownerS)} (23.07%)`;
+                    `CAS Owner Distribution: A: ${formatCurrency(ownerA)} (38.46%), C: ${formatCurrency(ownerC)} (38.46%), S: ${formatCurrency(ownerS)} (23.07%)`;
                 
                 document.getElementById('totalBasePayments').textContent = formatCurrency(totalBasePayments);
                 document.getElementById('totalBonusPayments').textContent = formatCurrency(totalBonusPayments);
