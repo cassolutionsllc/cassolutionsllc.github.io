@@ -1055,29 +1055,29 @@
              * Scenario 3: Limited Growth
              * Bonus activates after 2 months, business rarely exceeds $200k/month
              */
-            function loadScenario3() {
-                // Base pattern: below threshold for 2 months, then mostly below $200k
-                const basePattern = [
-                    25000,   // Month 1 - Below activation threshold
-                    29000,   // Month 2 - Below activation threshold
-                    40000,   // Month 3 - Exceeds activation threshold (bonus activates)
-                    120000,  // Month 4 - Below $200k pattern begins
-                    180000,  // Month 5
-                    150000,  // Month 6
-                    190000,  // Month 7
-                    120000,  // Month 8
-                    195000,  // Month 9
-                    160000,  // Month 10
-                    185000,  // Month 11
-                    200000,  // Month 12 - Reaches $200k
-                    175000,  // Month 13+ (if needed)
-                    190000,
-                    160000
-                ];
-                
-                // Apply randomized variation to the pattern (±12%)
-                setRandomizedRevenues(basePattern, 12);
-            }
+                function loadScenario3() {
+        // Base pattern: below threshold for 2 months, then limited to $10k-$60k
+        const basePattern = [
+            25000,   // Month 1 - Below activation threshold
+            29000,   // Month 2 - Below activation threshold
+            40000,   // Month 3 - Exceeds activation threshold (bonus activates)
+            35000,   // Month 4 - Limited growth pattern begins
+            45000,   // Month 5
+            30000,   // Month 6
+            55000,   // Month 7
+            25000,   // Month 8
+            60000,   // Month 9
+            20000,   // Month 10
+            40000,   // Month 11
+            15000,   // Month 12
+            50000,   // Month 13+ (if needed)
+            10000,
+            45000
+        ];
+        
+        // Apply randomized variation to the pattern (±15%)
+        setRandomizedRevenues(basePattern, 15);
+    }
             
             /**
              * Scenario 4: Bonus Maxes Out Then Pays Down
@@ -1193,6 +1193,7 @@
             
             // Run initial calculation
             calculatePayments();
+	    loadScenario4();
         });
     </script>
 </body>
