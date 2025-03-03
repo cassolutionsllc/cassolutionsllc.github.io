@@ -1,1194 +1,849 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAS & Verde Crest Payment Tracker</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f7fa;
-                .owner-shares {
-            font-size: 13px;
-            color: #34495e;
-            margin: 10px 0 15px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
-        h1, h2, h3 {
-            color: #2c3e50;
-            margin-top: 0;
-        }
-        
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        
-        /* Modified to create a more compact layout */
-        .control-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        
-        .param-group {
-            margin-bottom: 5px;
-        }
-        
-        label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 3px;
-            color: #34495e;
-            font-size: 0.9rem;
-        }
-        
-        /* Modified input styles for more compact appearance */
-        input, button {
-            width: 90%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 5px;
-            width: 100%;
-        }
-        
-        button:hover {
-            background-color: #2980b9;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-        
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: right;
-        }
-        
-        th {
-            background-color: #f2f6fc;
-            position: sticky;
-            top: 0;
-            font-weight: 600;
-            text-align: center;
-        }
-        
-        /* Made month inputs more compact */
-        .month-input-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-        }
-        
-        .month-input {
-            width: 85%;
-        }
-        
-        .red {
-            color: #e74c3c;
-        }
-        
-        .green {
-            color: #27ae60;
-        }
-        
-        .highlight {
-            background-color: #fffde7;
-        }
-        
-        .summary-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 12px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 8px 0;
-            color: #2c3e50;
-        }
-        
-        .stat-title {
-            font-weight: 600;
-            font-size: 13px;
-            color: #7f8c8d;
-        }
-        
-        .chart-container {
-            height: 300px;
-            margin: 20px 0;
-        }
-        
-        #revenue-table-container {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        @media (max-width: 768px) {
-            .control-panel {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        
-        .tab.active {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-bottom: 1px solid white;
-            border-radius: 5px 5px 0 0;
-            margin-bottom: -1px;
-            font-weight: 600;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Section container for better organization */
-        .section {
-            margin-bottom: 20px;
-        }
-        
-        /* Scenario button styles */
-        .scenario-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .scenario-btn {
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 15px;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            min-width: 200px;
-            transition: all 0.2s ease;
-        }
-        
-        .scenario-btn:hover {
-            background-color: #34495e;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        /* Legend styling */
-        .chart-legend {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            margin-right: 15px;
-        }
-        
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            margin-right: 5px;
-            border-radius: 2px;
-        }
-        
-        .legend-label {
-            font-weight: 500;
-        }
-        
-        /* Chart axis label style */
-        .axis-label {
-            font-size: 12px;
-            font-weight: 500;
-            margin-top: 5px;
-            text-align: center;
-        }
-        
-        /* Highlight for chart tooltip */
-        .chart-tooltip {
-            background: rgba(255, 255, 255, 0.9) !important;
-            border: 1px solid #ddd !important;
-            border-radius: 4px !important;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
-            padding: 8px !important;
-            font-size: 12px !important;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAS & Verde Crest Payment Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    .owner-shares {
+      font-size: 13px;
+      color: #34495e;
+      margin: 10px 0 15px;
+      text-align: center;
+      font-weight: 500;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .control-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .param-group {
+      margin-bottom: 5px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+      color: #34495e;
+      font-size: 0.9rem;
+    }
+    input[type="number"], input[type="range"], button {
+      width: 90%;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 5px;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: right;
+    }
+    th {
+      background-color: #f2f6fc;
+      position: sticky;
+      top: 0;
+      font-weight: 600;
+      text-align: center;
+    }
+    .month-input-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .month-input {
+      width: 85%;
+    }
+    .red {
+      color: #e74c3c;
+    }
+    .green {
+      color: #27ae60;
+    }
+    .highlight {
+      background-color: #fffde7;
+    }
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 8px 0;
+      color: #2c3e50;
+    }
+    .stat-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+    .chart-container {
+      height: 300px;
+      margin: 20px 0;
+    }
+    #revenue-table-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    @media (max-width: 768px) {
+      .control-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .tab.active {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-bottom: 1px solid white;
+      border-radius: 5px 5px 0 0;
+      margin-bottom: -1px;
+      font-weight: 600;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .scenario-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .scenario-btn {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 15px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      min-width: 200px;
+      transition: all 0.2s ease;
+    }
+    .scenario-btn:hover {
+      background-color: #34495e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      margin-right: 15px;
+    }
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      margin-right: 5px;
+      border-radius: 2px;
+    }
+    .legend-label {
+      font-weight: 500;
+    }
+    .axis-label {
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 5px;
+      text-align: center;
+    }
+    .chart-tooltip {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border: 1px solid #ddd !important;
+      border-radius: 4px !important;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+      padding: 8px !important;
+      font-size: 12px !important;
+    }
+    /* Styling for collapsible sections */
+    details > summary {
+      cursor: pointer;
+      font-size: 1.2em;
+      font-weight: 600;
+      padding: 5px 10px;
+      background: #f2f6fc;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    details[open] > summary {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>CAS & Verde Crest Payment Tracker</h1>
-            <p>This interactive tool helps visualize the payment structure between CAS Solutions LLC and Verde Crest, including base payments and bonus accrual mechanics.</p>
-            
-            <div class="tabs">
-                <div class="tab active" data-tab="calculator">Payment Calculator</div>
-                <div class="tab" data-tab="documentation">Documentation</div>
-            </div>
-            
-            <div class="tab-content active" id="calculator">
-                <!-- Parameters section - Made more compact -->
-                <div class="section">
-                    <h2>Payment Parameters</h2>
-                    <div class="control-panel">
-                        <div class="param-group">
-                            <label for="basePaymentPercentage">CAS Base Payment %:</label>
-                            <input type="number" id="basePaymentPercentage" value="65" min="0" max="100" step="1">
-                        </div>
-                        
-                        <div class="param-group">
-                            <label for="maxBasePayment">CAS Max Monthly Base:</label>
-                            <input type="number" id="maxBasePayment" value="125000" min="0" step="1000">
-                        </div>
-                        
-                        <div class="param-group">
-                            <label for="bonusActivationThreshold">Bonus Activation Threshold:</label>
-                            <input type="number" id="bonusActivationThreshold" value="30000" min="0" step="1000">
-                        </div>
-                        
-                        <div class="param-group">
-                            <label for="bonusPaymentThreshold">Bonus Payment Threshold:</label>
-                            <input type="number" id="bonusPaymentThreshold" value="250000" min="0" step="10000">
-                        </div>
-                        
-                        <div class="param-group">
-                            <label for="bonusPercentage">Bonus Payment %:</label>
-                            <input type="number" id="bonusPercentage" value="50" min="0" max="100" step="1">
-                        </div>
-                        
-                        <div class="param-group">
-                            <label for="maxBonusAccrual">Max Bonus Accrual:</label>
-                            <input type="number" id="maxBonusAccrual" value="500000" min="0" step="10000">
-                        </div>
-                        
-                        <div class="param-group">
-                            <label for="monthCount">Number of Months:</label>
-                            <input type="number" id="monthCount" value="18" min="1" max="36" step="1">
-                        </div>
-                        
-                        <div class="param-group">
-                            <button id="calculateButton">Calculate Payments</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Monthly Revenue Input - More compact grid -->
-                <div class="section">
-                    <h2>Monthly Revenue Input</h2>
-                    <div id="month-inputs" class="card">
-                        <!-- Month inputs will be generated here -->
-                    </div>
-                </div>
-                
-                <!-- Scenario Buttons - Moved above summary statistics -->
-                <div class="section">
-                    <h2>Predefined Scenarios</h2>
-                    <div class="scenario-buttons">
-                        <button id="scenario1" class="scenario-btn">Scenario 1: Gradual Scale-Up</button>
-                        <button id="scenario2" class="scenario-btn">Scenario 2: High Variability</button>
-                        <button id="scenario3" class="scenario-btn">Scenario 3: Limited Growth</button>
-                        <button id="scenario4" class="scenario-btn">Scenario 4: Max Bonus Paydown</button>
-                        <button id="scenario5" class="scenario-btn">Scenario 5: No Bonus Activation</button>
-                        <button id="scenario6" class="scenario-btn">Scenario 6: Sustained High Revenue</button>
-                    </div>
-                </div>
-                
-                <!-- Summary Statistics - Compressed layout -->
-                <div class="section">
-                    <h2>Summary Statistics</h2>
-                    <div class="summary-stats">
-                        <div class="stat-card">
-                            <div class="stat-title">Total Verde Crest Revenue</div>
-                            <div class="stat-value" id="totalVerdeRevenue">$0</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-title">Total CAS Revenue</div>
-                            <div class="stat-value" id="totalCASRevenue">$0</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-title">Verde Crest Net Revenue</div>
-                            <div class="stat-value" id="verdeCrestNet">$0</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-title">Total Base Payments</div>
-                            <div class="stat-value" id="totalBasePayments">$0</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-title">Total Bonus Payments</div>
-                            <div class="stat-value" id="totalBonusPayments">$0</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-title">Current Bonus Accrual</div>
-                            <div class="stat-value" id="currentBonusAccrual">$0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="owner-shares" id="ownerShares">CAS Owner Distribution: A: $0 (38.46%), C: $0 (38.46%), S: $0 (23.07%)</div>
-                </div>
-                
-                <!-- New Chart Section -->
-                <div class="section">
-                    <h2>Revenue Chart</h2>
-                    <div class="chart-container">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
-                </div>
-                
-                <!-- Payment Schedule Table -->
-                <div class="section">
-                    <h2>Payment Schedule</h2>
-                    <div id="revenue-table-container">
-                        <table id="revenue-table">
-                            <thead>
-                                <tr>
-                                    <th>Month</th>
-                                    <th>Verde Crest Revenue</th>
-                                    <th>Bonus Activated?</th>
-                                    <th>Base Payment</th>
-                                    <th>Shortfall</th>
-                                    <th>Cumulative Bonus Accrual</th>
-                                    <th>Revenue Above Threshold</th>
-                                    <th>Bonus Payment</th>
-                                    <th>Total CAS Revenue</th>
-                                    <th>Verde Crest Net</th>
-                                </tr>
-                            </thead>
-                            <tbody id="revenue-tbody">
-                                <!-- Table rows will be generated here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="documentation">
-                <h2>How the Payment Structure Works</h2>
-                
-                <h3>Base Payment Structure:</h3>
-                <ul>
-                    <li>CAS LLC always gets a percentage (default 65%) of Verde Crest's monthly revenue, up to a maximum amount (default $125,000) per month.</li>
-                    <li>If Verde Crest makes less than the amount needed to reach the maximum payment, CAS gets less than the maximum.</li>
-                </ul>
-                
-                <h3>Bonus Accrual Process:</h3>
-                <ol>
-                    <li><strong>Activation Trigger:</strong> Bonuses only start to accrue after Verde Crest has a single month with revenue exceeding the Bonus Activation Threshold (default $30,000). This is a one-time trigger.</li>
-                    <li><strong>Shortfall Tracking:</strong> Once activated, any month where CAS receives less than the maximum base payment, the difference becomes an accrued bonus.</li>
-                    <li><strong>Bonus Payment Mechanism:</strong> When Verde Crest's revenue exceeds the Bonus Payment Threshold (default $250,000) in a month, a percentage (default 50%) of the amount above the threshold goes toward paying off the accrued bonus.</li>
-                    <li><strong>Maximum Cap:</strong> The total accrued bonus can never exceed the Maximum Bonus Accrual (default $500,000).</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- Adding Chart.js for the line chart -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize chart variable
-            let revenueChart;
-            // Variable to track if we need to add event listeners to inputs
-            let inputsInitialized = false;
-            
-            // Tab functionality
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs and content
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding content
-                    this.classList.add('active');
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-            
-            // Initial setup
-            generateMonthInputs();
-            document.getElementById('calculateButton').addEventListener('click', calculatePayments);
-            
-            // Add scenario button event listeners
-            document.getElementById('scenario1').addEventListener('click', loadScenario1);
-            document.getElementById('scenario2').addEventListener('click', loadScenario2);
-            document.getElementById('scenario3').addEventListener('click', loadScenario3);
-            document.getElementById('scenario4').addEventListener('click', loadScenario4);
-            document.getElementById('scenario5').addEventListener('click', loadScenario5);
-            document.getElementById('scenario6').addEventListener('click', loadScenario6);
-            
-            // Add event listeners to all main parameters
-            const paramInputs = [
-                'basePaymentPercentage', 'maxBasePayment', 'bonusActivationThreshold',
-                'bonusPaymentThreshold', 'bonusPercentage', 'maxBonusAccrual'
-            ];
-            
-            paramInputs.forEach(paramId => {
-                document.getElementById(paramId).addEventListener('change', calculatePayments);
-                document.getElementById(paramId).addEventListener('input', debounce(calculatePayments, 500));
-            });
-            
-            // Add special handling for month count since it regenerates inputs
-            document.getElementById('monthCount').addEventListener('change', function() {
-                generateMonthInputs();
-                calculatePayments();
-            });
-            
-            /**
-             * Debounce function to limit how often a function is called
-             * @param {Function} func - The function to debounce
-             * @param {number} wait - The time to wait in milliseconds
-             * @return {Function} - Debounced function
-             */
-            function debounce(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            }
-            
-            /**
-             * Generates input fields for monthly revenue based on the selected month count
-             * and adds event listeners to them
-             */
-            function generateMonthInputs() {
-                const monthCount = parseInt(document.getElementById('monthCount').value);
-                const monthInputsContainer = document.getElementById('month-inputs');
-                monthInputsContainer.innerHTML = '';
-                
-                // Create a container for month inputs with more columns
-                const inputGrid = document.createElement('div');
-                inputGrid.className = 'month-input-container';
-                monthInputsContainer.appendChild(inputGrid);
-                
-                // Create input fields for each month
-                for (let i = 1; i <= monthCount; i++) {
-                    const monthGroup = document.createElement('div');
-                    monthGroup.className = 'param-group';
-                    
-                    const monthLabel = document.createElement('label');
-                    monthLabel.htmlFor = `month${i}`;
-                    monthLabel.textContent = `Month ${i} Revenue:`;
-                    
-                    const monthInput = document.createElement('input');
-                    monthInput.type = 'number';
-                    monthInput.id = `month${i}`;
-                    monthInput.className = 'month-input';
-                    monthInput.value = i % 2 === 0 ? 300000 : 50000; // Alternating example values
-                    monthInput.min = 0;
-                    monthInput.step = 5000; // Changed to align with 5k increments
-                    
-                    // Add event listeners to update when input changes
-                    monthInput.addEventListener('change', calculatePayments);
-                    // Also add input event with debounce for better UX during manual entry
-                    monthInput.addEventListener('input', debounce(calculatePayments, 300));
-                    
-                    monthGroup.appendChild(monthLabel);
-                    monthGroup.appendChild(monthInput);
-                    inputGrid.appendChild(monthGroup);
-                }
-                
-                // Add button container at the bottom
-                const buttonContainer = document.createElement('div');
-                buttonContainer.style.gridColumn = '1 / -1';
-                buttonContainer.style.marginTop = '10px';
-                
-                // Add random revenue generator button
-                const randomButton = document.createElement('button');
-                randomButton.id = 'randomRevenueButton';
-                randomButton.textContent = 'Generate Random Revenue';
-                randomButton.addEventListener('click', function() {
-                    generateRandomRevenue();
-                    calculatePayments(); // Update calculations after random generation
-                });
-                
-                buttonContainer.appendChild(randomButton);
-                monthInputsContainer.appendChild(buttonContainer);
-                
-                inputsInitialized = true;
-            }
-            
-            /**
-             * Generates random revenue values rounded to 5k increments
-             */
-            function generateRandomRevenue() {
-                const monthCount = parseInt(document.getElementById('monthCount').value);
-                
-                for (let i = 1; i <= monthCount; i++) {
-                    const monthInput = document.getElementById(`month${i}`);
-                    // Generate random revenue between $0 and $500,000, rounded to nearest 5k
-                    const randomValue = Math.floor(Math.random() * 101) * 5000; // 0, 5k, 10k, ..., 500k
-                    monthInput.value = randomValue;
-                }
-            }
-            
-            /**
-             * Creates or updates the revenue chart with both monthly and cumulative data
-             * @param {Array} results - Array of monthly payment data
-             */
-            function updateChart(results) {
-                const ctx = document.getElementById('revenueChart').getContext('2d');
-                
-                // Prepare data for the chart
-                const labels = results.map(result => `Month ${result.month}`);
-                const verdeRevenueData = results.map(result => result.verdeRevenue);
-                const casRevenueData = results.map(result => result.totalCASRevenue);
-                const bonusAccrualData = results.map(result => result.cumulativeBonusAccrual);
-                
-                // Calculate cumulative data
-                const cumulativeCASRevenue = [];
-                const cumulativeVerdeNet = [];
-                let casTotal = 0;
-                let verdeNetTotal = 0;
-                
-                results.forEach(result => {
-                    casTotal += result.totalCASRevenue;
-                    verdeNetTotal += result.verdeCrestNet;
-                    cumulativeCASRevenue.push(casTotal);
-                    cumulativeVerdeNet.push(verdeNetTotal);
-                });
-                
-                // Get maximum value for scaling the secondary axis
-                const maxCumulative = Math.max(
-                    ...cumulativeCASRevenue,
-                    ...cumulativeVerdeNet
-                );
-                
-                const maxMonthly = Math.max(
-                    ...verdeRevenueData,
-                    ...casRevenueData,
-                    ...bonusAccrualData
-                );
-                
-                // Calculate reasonable secondary axis scale
-                const secondaryAxisMax = Math.ceil(maxCumulative / 500000) * 500000;
-                const primaryAxisMax = Math.ceil(maxMonthly / 100000) * 100000;
-                
-                // Destroy previous chart if it exists
-                if (revenueChart) {
-                    revenueChart.destroy();
-                }
-                
-                // Create new chart with both axes
-                revenueChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            // Monthly datasets (left axis)
-                            {
-                                label: 'Verde Crest Revenue',
-                                data: verdeRevenueData,
-                                borderColor: '#27ae60',
-                                backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                                borderWidth: 2,
-                                tension: 0.2,
-                                yAxisID: 'y'
-                            },
-                            {
-                                label: 'CAS Revenue',
-                                data: casRevenueData,
-                                borderColor: '#3498db',
-                                backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                                borderWidth: 2,
-                                tension: 0.2,
-                                yAxisID: 'y'
-                            },
-                            {
-                                label: 'Bonus Accrual',
-                                data: bonusAccrualData,
-                                borderColor: '#e74c3c',
-                                backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                                borderWidth: 2,
-                                tension: 0.2,
-                                yAxisID: 'y'
-                            },
-                            // Cumulative datasets (right axis)
-                            {
-                                label: 'Cumulative CAS Income',
-                                data: cumulativeCASRevenue,
-                                borderColor: '#9b59b6',
-                                backgroundColor: 'rgba(155, 89, 182, 0.1)',
-                                borderWidth: 3,
-                                borderDash: [5, 5],
-                                tension: 0.2,
-                                yAxisID: 'y1',
-                                pointStyle: 'rectRot',
-                                pointRadius: 5,
-                                pointHoverRadius: 8
-                            },
-                            {
-                                label: 'Cumulative Verde Net Income',
-                                data: cumulativeVerdeNet,
-                                borderColor: '#f39c12',
-                                backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                                borderWidth: 3,
-                                borderDash: [5, 5],
-                                tension: 0.2,
-                                yAxisID: 'y1',
-                                pointStyle: 'triangle',
-                                pointRadius: 5,
-                                pointHoverRadius: 8
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                        scales: {
-                            // Primary Y-axis for monthly values
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                beginAtZero: true,
-                                max: primaryAxisMax,
-                                title: {
-                                    display: true,
-                                    text: 'Monthly Amount ($)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return '$' + (value >= 1000 ? (value/1000) + 'k' : value);
-                                    }
-                                },
-                                grid: {
-                                    drawOnChartArea: true
-                                }
-                            },
-                            // Secondary Y-axis for cumulative values
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                beginAtZero: true,
-                                max: secondaryAxisMax,
-                                title: {
-                                    display: true,
-                                    text: 'Cumulative Amount ($)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        if (value >= 1000000) {
-                                            return '$' + (value/1000000).toFixed(1) + 'M';
-                                        }
-                                        return '$' + (value/1000) + 'k';
-                                    }
-                                },
-                                grid: {
-                                    drawOnChartArea: false
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Month'
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.dataset.label || '';
-                                        const value = context.raw;
-                                        return label + ': ' + formatCurrency(value);
-                                    }
-                                }
-                            },
-                            legend: {
-                                position: 'top',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 15
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            /**
-             * Calculate payments based on input parameters and update the UI
-             */
-            function calculatePayments() {
-                // Get parameters
-                const basePaymentPercentage = parseInt(document.getElementById('basePaymentPercentage').value) / 100;
-                const maxBasePayment = parseInt(document.getElementById('maxBasePayment').value);
-                const bonusActivationThreshold = parseInt(document.getElementById('bonusActivationThreshold').value);
-                const bonusPaymentThreshold = parseInt(document.getElementById('bonusPaymentThreshold').value);
-                const bonusPercentage = parseInt(document.getElementById('bonusPercentage').value) / 100;
-                const maxBonusAccrual = parseInt(document.getElementById('maxBonusAccrual').value);
-                const monthCount = parseInt(document.getElementById('monthCount').value);
-                
-                // Get monthly revenues
-                const monthlyRevenues = [];
-                for (let i = 1; i <= monthCount; i++) {
-                    monthlyRevenues.push(parseInt(document.getElementById(`month${i}`).value));
-                }
-                
-                // Initialize calculation variables
-                let bonusActivated = false;
-                let cumulativeBonusAccrual = 0;
-                let totalVerdeRevenue = 0;
-                let totalCASRevenue = 0;
-                let totalBasePayments = 0;
-                let totalBonusPayments = 0;
-                
-                // Prepare results array
-                const results = [];
-                
-                // Calculate payments for each month
-                for (let i = 0; i < monthCount; i++) {
-                    const monthRevenue = monthlyRevenues[i];
-                    totalVerdeRevenue += monthRevenue;
-                    
-                    // Check if bonus is activated
-                    if (!bonusActivated && monthRevenue >= bonusActivationThreshold) {
-                        bonusActivated = true;
-                    }
-                    
-                    // Calculate base payment
-                    const basePayment = Math.min(monthRevenue * basePaymentPercentage, maxBasePayment);
-                    totalBasePayments += basePayment;
-                    
-                    // Calculate shortfall
-                    let shortfall = 0;
-                    if (bonusActivated && basePayment < maxBasePayment) {
-                        shortfall = maxBasePayment - basePayment;
-                        cumulativeBonusAccrual = Math.min(cumulativeBonusAccrual + shortfall, maxBonusAccrual);
-                    }
-                    
-                    // Calculate bonus payment
-                    let revenueAboveThreshold = Math.max(0, monthRevenue - bonusPaymentThreshold);
-                    let bonusPayment = 0;
-                    
-                    if (revenueAboveThreshold > 0 && cumulativeBonusAccrual > 0) {
-                        bonusPayment = Math.min(revenueAboveThreshold * bonusPercentage, cumulativeBonusAccrual);
-                        cumulativeBonusAccrual -= bonusPayment;
-                        totalBonusPayments += bonusPayment;
-                    }
-                    
-                    // Calculate total CAS revenue for the month
-                    const totalCASMonthlyRevenue = basePayment + bonusPayment;
-                    totalCASRevenue += totalCASMonthlyRevenue;
-                    
-                    // Calculate Verde Crest net revenue
-                    const verdeCrestNet = monthRevenue - totalCASMonthlyRevenue;
-                    
-                    // Add to results
-                    results.push({
-                        month: i + 1,
-                        verdeRevenue: monthRevenue,
-                        bonusActivated: bonusActivated,
-                        basePayment: basePayment,
-                        shortfall: shortfall,
-                        cumulativeBonusAccrual: cumulativeBonusAccrual,
-                        revenueAboveThreshold: revenueAboveThreshold,
-                        bonusPayment: bonusPayment,
-                        totalCASRevenue: totalCASMonthlyRevenue,
-                        verdeCrestNet: verdeCrestNet
-                    });
-                }
-                
-                // Update summary statistics
-                document.getElementById('totalVerdeRevenue').textContent = formatCurrency(totalVerdeRevenue);
-                document.getElementById('totalCASRevenue').textContent = formatCurrency(totalCASRevenue);
-                
-                // Calculate and update owner shares
-                const ownerA = totalCASRevenue * 0.4;
-                const ownerC = totalCASRevenue * 0.4;
-                const ownerS = totalCASRevenue * 0.2;
-                document.getElementById('ownerShares').innerHTML = 
-                    `CAS Owner Distribution: A: ${formatCurrency(ownerA)} (40%), C: ${formatCurrency(ownerC)} (40%), S: ${formatCurrency(ownerS)} (20%)`;
-                
-                document.getElementById('totalBasePayments').textContent = formatCurrency(totalBasePayments);
-                document.getElementById('totalBonusPayments').textContent = formatCurrency(totalBonusPayments);
-                document.getElementById('currentBonusAccrual').textContent = formatCurrency(cumulativeBonusAccrual);
-                document.getElementById('verdeCrestNet').textContent = formatCurrency(totalVerdeRevenue - totalCASRevenue);
-                
-                // Update the chart
-                updateChart(results);
-                
-                // Populate the table
-                const tableBody = document.getElementById('revenue-tbody');
-                tableBody.innerHTML = '';
-                
-                results.forEach(result => {
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td>${result.month}</td>
-                        <td>${formatCurrency(result.verdeRevenue)}</td>
-                        <td>${result.bonusActivated ? 'Yes' : 'No'}</td>
-                        <td>${formatCurrency(result.basePayment)}</td>
-                        <td>${formatCurrency(result.shortfall)}</td>
-                        <td>${formatCurrency(result.cumulativeBonusAccrual)}</td>
-                        <td>${formatCurrency(result.revenueAboveThreshold)}</td>
-                        <td>${formatCurrency(result.bonusPayment)}</td>
-                        <td>${formatCurrency(result.totalCASRevenue)}</td>
-                        <td>${formatCurrency(result.verdeCrestNet)}</td>
-                    `;
-                    
-                    // Highlight rows with bonus payments
-                    if (result.bonusPayment > 0) {
-                        row.classList.add('highlight');
-                    }
-                    
-                    tableBody.appendChild(row);
-                });
-            }
-            
-            /**
-             * Format a number as currency
-             * @param {number} amount - The amount to format
-             * @return {string} - Formatted currency string
-             */
-            function formatCurrency(amount) {
-                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-            }
-            
-            /**
-             * Add random variation to a base value
-             * @param {number} baseValue - The base value
-             * @param {number} variationPercent - Percentage variation (e.g., 10 for ±10%)
-             * @param {number} maxValue - Optional maximum value cap
-             * @return {number} - Value with random variation, rounded to nearest 500
-             */
-            function addRandomVariation(baseValue, variationPercent = 10, maxValue = null) {
-                const variation = baseValue * (variationPercent / 100);
-                // Random value between -variation and +variation
-                const randomAdjustment = (Math.random() * 2 - 1) * variation;
-                // Round to nearest 500
-                let result = Math.round((baseValue + randomAdjustment) / 500) * 500;
-                
-                // Apply cap if provided
-                if (maxValue !== null && result > maxValue) {
-                    result = maxValue;
-                }
-                
-                return result;
-            }
-            
-            /**
-             * Sets month input values with the specified pattern and randomness
-             * @param {Array} basePattern - Base revenue pattern to follow
-             * @param {number} variationPercent - Percentage variation for randomness
-             */
-            function setRandomizedRevenues(basePattern, variationPercent = 10) {
-                // Get desired month count from input
-                const monthCount = parseInt(document.getElementById('monthCount').value);
-                
-                // Make sure month count is properly set
-                if (monthCount !== document.getElementById('monthCount').value) {
-                    document.getElementById('monthCount').value = monthCount;
-                    generateMonthInputs();
-                }
-                
-                // Create revenue array with random variations based on the pattern
-                const revenues = [];
-                
-                // For each month, generate randomized revenue based on pattern
-                for (let i = 0; i < monthCount; i++) {
-                    // If within pattern range, use pattern with variation
-                    if (i < basePattern.length) {
-                        revenues.push(addRandomVariation(basePattern[i], variationPercent));
-                    } else {
-                        // Beyond pattern length, extrapolate from last few months
-                        const lastIndex = basePattern.length - 1;
-                        const baseValue = basePattern[lastIndex];
-                        revenues.push(addRandomVariation(baseValue, variationPercent * 1.5));
-                    }
-                }
-                
-                // Set revenue values in UI
-                revenues.forEach((value, index) => {
-                    if (document.getElementById(`month${index+1}`)) {
-                        document.getElementById(`month${index+1}`).value = value;
-                    }
-                });
-                
-                // Calculate payments with new values
-                calculatePayments();
-            }
-            
-            /**
-             * Scenario 1: Gradual Scale-Up
-             * Bonus activates after 3 months, then revenue gradually increases
-             */
-            function loadScenario1() {
-                // Base pattern: below threshold for 3 months, then gradual growth
-                const basePattern = [
-                    20000,   // Month 1 - Below activation threshold
-                    25000,   // Month 2 - Below activation threshold
-                    29000,   // Month 3 - Below activation threshold
-                    35000,   // Month 4 - Exceeds activation threshold (bonus activates)
-                    50000,   // Month 5 - Gradual increase begins
-                    75000,   // Month 6
-                    100000,  // Month 7
-                    150000,  // Month 8
-                    200000,  // Month 9
-                    250000,  // Month 10
-                    300000,  // Month 11
-                    350000,  // Month 12
-                    400000,  // Month 13+ (if needed)
-                    450000,
-                    500000
-                ];
-                
-                // Apply randomized variation to the pattern (±15%)
-                setRandomizedRevenues(basePattern, 15);
-            }
-            
-            /**
-             * Scenario 2: High Variability
-             * Bonus activates after 3 months, then revenue has high variability
-             */
-            function loadScenario2() {
-                // Base pattern: below threshold for 3 months, then highly variable
-                const basePattern = [
-                    20000,   // Month 1 - Below activation threshold
-                    25000,   // Month 2 - Below activation threshold
-                    28000,   // Month 3 - Below activation threshold
-                    45000,   // Month 4 - Exceeds activation threshold (bonus activates)
-                    90000,   // Month 5 - High variability begins
-                    300000,  // Month 6 - High month
-                    75000,   // Month 7 - Low month
-                    400000,  // Month 8 - High month
-                    100000,  // Month 9 - Low month
-                    350000,  // Month 10 - High month
-                    60000,   // Month 11 - Low month
-                    320000,  // Month 12 - High month
-                    80000,   // Month 13+ (if needed)
-                    380000,
-                    70000
-                ];
-                
-                // Apply randomized variation to the pattern (±20%)
-                setRandomizedRevenues(basePattern, 20);
-            }
-            
-            /**
-             * Scenario 3: Limited Growth
-             * Bonus activates after 2 months, business rarely exceeds $200k/month
-             */
-                function loadScenario3() {
-        // Base pattern: below threshold for 2 months, then limited to $10k-$60k
-        const basePattern = [
-            25000,   // Month 1 - Below activation threshold
-            29000,   // Month 2 - Below activation threshold
-            40000,   // Month 3 - Exceeds activation threshold (bonus activates)
-            35000,   // Month 4 - Limited growth pattern begins
-            45000,   // Month 5
-            30000,   // Month 6
-            55000,   // Month 7
-            25000,   // Month 8
-            60000,   // Month 9
-            20000,   // Month 10
-            40000,   // Month 11
-            15000,   // Month 12
-            50000,   // Month 13+ (if needed)
-            10000,
-            45000
-        ];
+  <div class="container">
+    <div class="card">
+      <h1>CAS & Verde Crest Payment Tracker</h1>
+      <p>This interactive tool helps visualize the payment structure between CAS Solutions LLC and Verde Crest, including base payments and bonus accrual mechanics.</p>
+      
+      <div class="tabs">
+        <div class="tab active" data-tab="calculator">Payment Calculator</div>
+        <div class="tab" data-tab="documentation">Documentation</div>
+      </div>
+      
+      <div class="tab-content active" id="calculator">
         
-        // Apply randomized variation to the pattern (±15%)
-        setRandomizedRevenues(basePattern, 15);
-    }
-            
-            /**
-             * Scenario 4: Bonus Maxes Out Then Pays Down
-             * Bonus accrual reaches maximum and then is paid down over time with oscillating revenue
-             */
-            function loadScenario4() {
-                // Base pattern: low months to build max accrual, then alternating high/moderate months
-                const basePattern = [
-                    50000,   // Month 1 - Above activation threshold
-                    40000,   // Month 2 - Low revenue to build accrual
-                    30000,   // Month 3 - Low revenue to build accrual
-                    35000,   // Month 4 - Low revenue to build accrual
-                    45000,   // Month 5 - Low revenue to build accrual
-                    40000,   // Month 6 - Low revenue to build accrual
-                    350000,  // Month 7 - High revenue to start paying down
-                    200000,  // Month 8 - Moderate revenue
-                    400000,  // Month 9 - High revenue
-                    180000,  // Month 10 - Moderate revenue
-                    420000,  // Month 11 - High revenue
-                    250000,  // Month 12 - Moderate revenue
-                    380000,  // Month 13+ (if needed)
-                    190000,
-                    350000
-                ];
-                
-                // Apply randomized variation to the pattern (±18%)
-                setRandomizedRevenues(basePattern, 18);
-            }
-            
-            /**
-             * Scenario 5: No Bonus Activation
-             * Revenue never reaches the bonus activation threshold
-             */
-            function loadScenario5() {
-                // Get the activation threshold to ensure we stay below it
-                const bonusActivationThreshold = parseInt(document.getElementById('bonusActivationThreshold').value);
-                const maxRevenue = bonusActivationThreshold - 1000; // Stay at least 1k below threshold
-                
-                // Base pattern: all below activation threshold
-                const basePattern = [
-                    20000,   // Month 1
-                    23000,   // Month 2
-                    22000,   // Month 3
-                    25000,   // Month 4
-                    24000,   // Month 5
-                    26000,   // Month 6
-                    25000,   // Month 7
-                    24000,   // Month 8
-                    26500,   // Month 9
-                    25500,   // Month 10
-                    26000,   // Month 11
-                    27500,   // Month 12 - Close but still below threshold
-                    26000,   // Month 13+ (if needed)
-                    27000,
-                    26500
-                ];
-                
-                // Apply randomized variation to the pattern (±10% - but cap at maxRevenue)
-                const revenues = [];
-                const monthCount = parseInt(document.getElementById('monthCount').value);
-                
-                // For each month, generate randomized revenue based on pattern but capped
-                for (let i = 0; i < monthCount; i++) {
-                    // If within pattern range, use pattern with variation
-                    if (i < basePattern.length) {
-                        revenues.push(addRandomVariation(basePattern[i], 10, maxRevenue));
-                    } else {
-                        // Beyond pattern length, extrapolate from last few months
-                        const lastIndex = basePattern.length - 1;
-                        const baseValue = basePattern[lastIndex];
-                        revenues.push(addRandomVariation(baseValue, 12, maxRevenue));
-                    }
-                }
-                
-                // Set revenue values in UI
-                revenues.forEach((value, index) => {
-                    if (document.getElementById(`month${index+1}`)) {
-                        document.getElementById(`month${index+1}`).value = value;
-                    }
-                });
-                
-                // Calculate payments with new values
-                calculatePayments();
-            }
-            
-            /**
-             * Scenario 6: Sustained High Revenue
-             * After 4 months, consistently between $250k and $750k
-             */
-            function loadScenario6() {
-                // Base pattern: normal start, then high sustained revenue
-                const basePattern = [
-                    40000,   // Month 1
-                    60000,   // Month 2
-                    85000,   // Month 3
-                    120000,  // Month 4 - Last month below $250k
-                    280000,  // Month 5 - Begin high revenue period
-                    350000,  // Month 6
-                    500000,  // Month 7
-                    420000,  // Month 8
-                    650000,  // Month 9
-                    550000,  // Month 10
-                    750000,  // Month 11
-                    680000,  // Month 12
-                    600000,  // Month 13+ (if needed)
-                    700000,
-                    550000
-                ];
-                
-                // Apply randomized variation to the pattern (±15%)
-                setRandomizedRevenues(basePattern, 15);
-            }
-            
-            // Run initial calculation
-            calculatePayments();
-	    loadScenario4();
+        <!-- Collapsible Monthly Revenue Input Section (collapsed by default) -->
+        <details class="section">
+          <summary>Monthly Revenue Input</summary>
+          <div id="month-inputs" class="card">
+            <!-- Month inputs will be generated here -->
+          </div>
+        </details>
+        
+        <!-- Predefined Scenarios -->
+        <details class="section">
+          <summary>Predefined Scenarios</summary>
+          <div class="scenario-buttons">
+            <button id="scenario1" class="scenario-btn">Scenario 1: Gradual Scale-Up</button>
+            <button id="scenario2" class="scenario-btn">Scenario 2: High Variability</button>
+            <button id="scenario3" class="scenario-btn">Scenario 3: Limited Growth</button>
+            <button id="scenario4" class="scenario-btn">Scenario 4: Max Bonus Paydown</button>
+            <button id="scenario5" class="scenario-btn">Scenario 5: No Bonus Activation</button>
+            <button id="scenario6" class="scenario-btn">Scenario 6: Sustained High Revenue</button>
+          </div>
+        </details>
+
+        <!-- Collapsible Payment Parameters Section with sliders -->
+        <details class="section" open>
+          <summary>Payment Parameters</summary>
+          <div class="control-panel">
+            <div class="param-group">
+              <label for="basePaymentPercentage">CAS Base Payment %:</label>
+              <input type="range" id="basePaymentPercentageSlider" value="65" min="0" max="100" step="1">
+              <input type="number" id="basePaymentPercentage" value="65" min="0" max="100" step="1">
+            </div>
+            <div class="param-group">
+              <label for="maxBasePayment">CAS Max Monthly Base:</label>
+              <input type="range" id="maxBasePaymentSlider" value="125000" min="0" max="250000" step="1000">
+              <input type="number" id="maxBasePayment" value="125000" min="0" max="250000" step="1000">
+            </div>
+            <div class="param-group">
+              <label for="bonusActivationThreshold">Bonus Activation Threshold:</label>
+              <input type="range" id="bonusActivationThresholdSlider" value="30000" min="0" max="100000" step="1000">
+              <input type="number" id="bonusActivationThreshold" value="30000" min="0" max="100000" step="1000">
+            </div>
+            <div class="param-group">
+              <label for="bonusPaymentThreshold">Bonus Payment Threshold:</label>
+              <input type="range" id="bonusPaymentThresholdSlider" value="250000" min="0" max="500000" step="10000">
+              <input type="number" id="bonusPaymentThreshold" value="250000" min="0" max="500000" step="10000">
+            </div>
+            <div class="param-group">
+              <label for="bonusPercentage">Bonus Payment %:</label>
+              <input type="range" id="bonusPercentageSlider" value="50" min="0" max="100" step="1">
+              <input type="number" id="bonusPercentage" value="50" min="0" max="100" step="1">
+            </div>
+            <div class="param-group">
+              <label for="maxBonusAccrual">Max Bonus Accrual:</label>
+              <input type="range" id="maxBonusAccrualSlider" value="500000" min="0" max="1000000" step="10000">
+              <input type="number" id="maxBonusAccrual" value="500000" min="0" max="1000000" step="10000">
+            </div>
+            <div class="param-group">
+              <label for="monthCount">Number of Months:</label>
+              <input type="range" id="monthCountSlider" value="18" min="1" max="36" step="1">
+              <input type="number" id="monthCount" value="18" min="1" max="36" step="1">
+            </div>
+            <div class="param-group">
+              <button id="calculateButton">Calculate Payments</button>
+            </div>
+          </div>
+        </details>
+        
+        <!-- Revenue Chart Section -->
+        <div class="section">
+          <!-- <h2>Revenue Chart</h2> -->
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- Moved Summary Statistics (now beneath the chart) -->
+        <div class="section">
+          <!-- <h2>Summary Statistics</h2> -->
+          <div class="summary-stats">
+            <div class="stat-card">
+              <div class="stat-title">Total Verde Crest Revenue</div>
+              <div class="stat-value" id="totalVerdeRevenue">$0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total CAS Revenue</div>
+              <div class="stat-value" id="totalCASRevenue">$0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Verde Crest Net Revenue</div>
+              <div class="stat-value" id="verdeCrestNet">$0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total Base Payments</div>
+              <div class="stat-value" id="totalBasePayments">$0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total Bonus Payments</div>
+              <div class="stat-value" id="totalBonusPayments">$0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Current Bonus Accrual</div>
+              <div class="stat-value" id="currentBonusAccrual">$0</div>
+            </div>
+          </div>
+          <div class="owner-shares" id="ownerShares">CAS Owner Distribution: A: $0 (40%), C: $0 (40%), S: $0 (20%)</div>
+        </div>
+        
+        <!-- Payment Schedule Table -->
+        <div class="section">
+          <h2>Payment Schedule</h2>
+          <div id="revenue-table-container">
+            <table id="revenue-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Verde Crest Revenue</th>
+                  <th>Bonus Activated?</th>
+                  <th>Base Payment</th>
+                  <th>Shortfall</th>
+                  <th>Cumulative Bonus Accrual</th>
+                  <th>Revenue Above Threshold</th>
+                  <th>Bonus Payment</th>
+                  <th>Total CAS Revenue</th>
+                  <th>Verde Crest Net</th>
+                </tr>
+              </thead>
+              <tbody id="revenue-tbody">
+                <!-- Table rows will be generated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="documentation">
+        <h2>How the Payment Structure Works</h2>
+        <h3>Base Payment Structure:</h3>
+        <ul>
+          <li>CAS LLC always gets a percentage (default 65%) of Verde Crest's monthly revenue, up to a maximum amount (default $125,000) per month.</li>
+          <li>If Verde Crest makes less than the amount needed to reach the maximum payment, CAS gets less than the maximum.</li>
+        </ul>
+        <h3>Bonus Accrual Process:</h3>
+        <ol>
+          <li><strong>Activation Trigger:</strong> Bonuses only start to accrue after Verde Crest has a single month with revenue exceeding the Bonus Activation Threshold (default $30,000). This is a one-time trigger.</li>
+          <li><strong>Shortfall Tracking:</strong> Once activated, any month where CAS receives less than the maximum base payment, the difference becomes an accrued bonus.</li>
+          <li><strong>Bonus Payment Mechanism:</strong> When Verde Crest's revenue exceeds the Bonus Payment Threshold (default $250,000) in a month, a percentage (default 50%) of the amount above the threshold goes toward paying off the accrued bonus.</li>
+          <li><strong>Maximum Cap:</strong> The total accrued bonus can never exceed the Maximum Bonus Accrual (default $500,000).</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adding Chart.js for the line chart -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let revenueChart;
+      let inputsInitialized = false;
+
+      // Tab functionality
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          const tabId = this.getAttribute('data-tab');
+          document.getElementById(tabId).classList.add('active');
         });
-    </script>
+      });
+
+      // Initial setup
+      generateMonthInputs();
+      document.getElementById('calculateButton').addEventListener('click', calculatePayments);
+
+      // Add scenario button event listeners
+      document.getElementById('scenario1').addEventListener('click', loadScenario1);
+      document.getElementById('scenario2').addEventListener('click', loadScenario2);
+      document.getElementById('scenario3').addEventListener('click', loadScenario3);
+      document.getElementById('scenario4').addEventListener('click', loadScenario4);
+      document.getElementById('scenario5').addEventListener('click', loadScenario5);
+      document.getElementById('scenario6').addEventListener('click', loadScenario6);
+
+      // Sync slider and number input for each payment parameter
+      function syncSliderAndInput(sliderId, inputId, extraCallback) {
+        const slider = document.getElementById(sliderId);
+        const input = document.getElementById(inputId);
+        slider.addEventListener('input', function() {
+          input.value = slider.value;
+          if(extraCallback) { extraCallback(); } else { calculatePayments(); }
+        });
+        input.addEventListener('input', function() {
+          slider.value = input.value;
+          if(extraCallback) { extraCallback(); } else { calculatePayments(); }
+        });
+      }
+      syncSliderAndInput('basePaymentPercentageSlider', 'basePaymentPercentage');
+      syncSliderAndInput('maxBasePaymentSlider', 'maxBasePayment');
+      syncSliderAndInput('bonusActivationThresholdSlider', 'bonusActivationThreshold');
+      syncSliderAndInput('bonusPaymentThresholdSlider', 'bonusPaymentThreshold');
+      syncSliderAndInput('bonusPercentageSlider', 'bonusPercentage');
+      syncSliderAndInput('maxBonusAccrualSlider', 'maxBonusAccrual');
+      // For monthCount, also regenerate month inputs
+      syncSliderAndInput('monthCountSlider', 'monthCount', function() {
+        generateMonthInputs();
+        calculatePayments();
+      });
+
+      // Also update calculations when monthCount number input changes
+      document.getElementById('monthCount').addEventListener('change', function() {
+        generateMonthInputs();
+        calculatePayments();
+      });
+
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      function generateMonthInputs() {
+        const monthCount = parseInt(document.getElementById('monthCount').value);
+        const monthInputsContainer = document.getElementById('month-inputs');
+        monthInputsContainer.innerHTML = '';
+        const inputGrid = document.createElement('div');
+        inputGrid.className = 'month-input-container';
+        monthInputsContainer.appendChild(inputGrid);
+        for (let i = 1; i <= monthCount; i++) {
+          const monthGroup = document.createElement('div');
+          monthGroup.className = 'param-group';
+          const monthLabel = document.createElement('label');
+          monthLabel.htmlFor = `month${i}`;
+          monthLabel.textContent = `Month ${i} Revenue:`;
+          const monthInput = document.createElement('input');
+          monthInput.type = 'number';
+          monthInput.id = `month${i}`;
+          monthInput.className = 'month-input';
+          monthInput.value = i % 2 === 0 ? 300000 : 50000;
+          monthInput.min = 0;
+          monthInput.step = 5000;
+          monthInput.addEventListener('change', calculatePayments);
+          monthInput.addEventListener('input', debounce(calculatePayments, 300));
+          monthGroup.appendChild(monthLabel);
+          monthGroup.appendChild(monthInput);
+          inputGrid.appendChild(monthGroup);
+        }
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.gridColumn = '1 / -1';
+        buttonContainer.style.marginTop = '10px';
+        const randomButton = document.createElement('button');
+        randomButton.id = 'randomRevenueButton';
+        randomButton.textContent = 'Generate Random Revenue';
+        randomButton.addEventListener('click', function() {
+          generateRandomRevenue();
+          calculatePayments();
+        });
+        buttonContainer.appendChild(randomButton);
+        monthInputsContainer.appendChild(buttonContainer);
+        inputsInitialized = true;
+      }
+
+      function generateRandomRevenue() {
+        const monthCount = parseInt(document.getElementById('monthCount').value);
+        for (let i = 1; i <= monthCount; i++) {
+          const monthInput = document.getElementById(`month${i}`);
+          const randomValue = Math.floor(Math.random() * 101) * 5000;
+          monthInput.value = randomValue;
+        }
+      }
+
+      function updateChart(results) {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const labels = results.map(result => `Month ${result.month}`);
+        const verdeRevenueData = results.map(result => result.verdeRevenue);
+        const casRevenueData = results.map(result => result.totalCASRevenue);
+        const bonusAccrualData = results.map(result => result.cumulativeBonusAccrual);
+        const cumulativeCASRevenue = [];
+        const cumulativeVerdeNet = [];
+        let casTotal = 0;
+        let verdeNetTotal = 0;
+        results.forEach(result => {
+          casTotal += result.totalCASRevenue;
+          verdeNetTotal += result.verdeCrestNet;
+          cumulativeCASRevenue.push(casTotal);
+          cumulativeVerdeNet.push(verdeNetTotal);
+        });
+        const maxCumulative = Math.max(...cumulativeCASRevenue, ...cumulativeVerdeNet);
+        const maxMonthly = Math.max(...verdeRevenueData, ...casRevenueData, ...bonusAccrualData);
+        const secondaryAxisMax = Math.ceil(maxCumulative / 500000) * 500000;
+        const primaryAxisMax = Math.ceil(maxMonthly / 100000) * 100000;
+        if (revenueChart) {
+          revenueChart.destroy();
+        }
+        revenueChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Verde Crest Revenue',
+                data: verdeRevenueData,
+                borderColor: '#27ae60',
+                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                borderWidth: 2,
+                tension: 0.2,
+                yAxisID: 'y'
+              },
+              {
+                label: 'CAS Revenue',
+                data: casRevenueData,
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                borderWidth: 2,
+                tension: 0.2,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Bonus Accrual',
+                data: bonusAccrualData,
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                borderWidth: 2,
+                tension: 0.2,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Cumulative CAS Income',
+                data: cumulativeCASRevenue,
+                borderColor: '#9b59b6',
+                backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                borderWidth: 3,
+                borderDash: [5, 5],
+                tension: 0.2,
+                yAxisID: 'y1',
+                pointStyle: 'rectRot',
+                pointRadius: 5,
+                pointHoverRadius: 8
+              },
+              {
+                label: 'Cumulative Verde Net Income',
+                data: cumulativeVerdeNet,
+                borderColor: '#f39c12',
+                backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                borderWidth: 3,
+                borderDash: [5, 5],
+                tension: 0.2,
+                yAxisID: 'y1',
+                pointStyle: 'triangle',
+                pointRadius: 5,
+                pointHoverRadius: 8
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                beginAtZero: true,
+                max: primaryAxisMax,
+                title: { display: true, text: 'Monthly Amount ($)' },
+                ticks: {
+                  callback: function(value) {
+                    return '$' + (value >= 1000 ? (value/1000) + 'k' : value);
+                  }
+                },
+                grid: { drawOnChartArea: true }
+              },
+              y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                beginAtZero: true,
+                max: secondaryAxisMax,
+                title: { display: true, text: 'Cumulative Amount ($)' },
+                ticks: {
+                  callback: function(value) {
+                    if (value >= 1000000) {
+                      return '$' + (value/1000000).toFixed(1) + 'M';
+                    }
+                    return '$' + (value/1000) + 'k';
+                  }
+                },
+                grid: { drawOnChartArea: false }
+              },
+              x: { title: { display: true, text: 'Month' } }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.dataset.label || '';
+                    const value = context.raw;
+                    return label + ': ' + formatCurrency(value);
+                  }
+                }
+              },
+              legend: { position: 'top', labels: { usePointStyle: true, padding: 15 } }
+            }
+          }
+        });
+      }
+
+      function calculatePayments() {
+        const basePaymentPercentage = parseInt(document.getElementById('basePaymentPercentage').value) / 100;
+        const maxBasePayment = parseInt(document.getElementById('maxBasePayment').value);
+        const bonusActivationThreshold = parseInt(document.getElementById('bonusActivationThreshold').value);
+        const bonusPaymentThreshold = parseInt(document.getElementById('bonusPaymentThreshold').value);
+        const bonusPercentage = parseInt(document.getElementById('bonusPercentage').value) / 100;
+        const maxBonusAccrual = parseInt(document.getElementById('maxBonusAccrual').value);
+        const monthCount = parseInt(document.getElementById('monthCount').value);
+        const monthlyRevenues = [];
+        for (let i = 1; i <= monthCount; i++) {
+          monthlyRevenues.push(parseInt(document.getElementById(`month${i}`).value));
+        }
+        let bonusActivated = false;
+        let cumulativeBonusAccrual = 0;
+        let totalVerdeRevenue = 0;
+        let totalCASRevenue = 0;
+        let totalBasePayments = 0;
+        let totalBonusPayments = 0;
+        const results = [];
+        for (let i = 0; i < monthCount; i++) {
+          const monthRevenue = monthlyRevenues[i];
+          totalVerdeRevenue += monthRevenue;
+          if (!bonusActivated && monthRevenue >= bonusActivationThreshold) {
+            bonusActivated = true;
+          }
+          const basePayment = Math.min(monthRevenue * basePaymentPercentage, maxBasePayment);
+          totalBasePayments += basePayment;
+          let shortfall = 0;
+          if (bonusActivated && basePayment < maxBasePayment) {
+            shortfall = maxBasePayment - basePayment;
+            cumulativeBonusAccrual = Math.min(cumulativeBonusAccrual + shortfall, maxBonusAccrual);
+          }
+          let revenueAboveThreshold = Math.max(0, monthRevenue - bonusPaymentThreshold);
+          let bonusPayment = 0;
+          if (revenueAboveThreshold > 0 && cumulativeBonusAccrual > 0) {
+            bonusPayment = Math.min(revenueAboveThreshold * bonusPercentage, cumulativeBonusAccrual);
+            cumulativeBonusAccrual -= bonusPayment;
+            totalBonusPayments += bonusPayment;
+          }
+          const totalCASMonthlyRevenue = basePayment + bonusPayment;
+          totalCASRevenue += totalCASMonthlyRevenue;
+          const verdeCrestNet = monthRevenue - totalCASMonthlyRevenue;
+          results.push({
+            month: i + 1,
+            verdeRevenue: monthRevenue,
+            bonusActivated: bonusActivated,
+            basePayment: basePayment,
+            shortfall: shortfall,
+            cumulativeBonusAccrual: cumulativeBonusAccrual,
+            revenueAboveThreshold: revenueAboveThreshold,
+            bonusPayment: bonusPayment,
+            totalCASRevenue: totalCASMonthlyRevenue,
+            verdeCrestNet: verdeCrestNet
+          });
+        }
+        document.getElementById('totalVerdeRevenue').textContent = formatCurrency(totalVerdeRevenue);
+        document.getElementById('totalCASRevenue').textContent = formatCurrency(totalCASRevenue);
+        const ownerA = totalCASRevenue * 0.4;
+        const ownerC = totalCASRevenue * 0.4;
+        const ownerS = totalCASRevenue * 0.2;
+        document.getElementById('ownerShares').innerHTML =
+          `CAS Owner Distribution: A: ${formatCurrency(ownerA)} (40%), C: ${formatCurrency(ownerC)} (40%), S: ${formatCurrency(ownerS)} (20%)`;
+        document.getElementById('totalBasePayments').textContent = formatCurrency(totalBasePayments);
+        document.getElementById('totalBonusPayments').textContent = formatCurrency(totalBonusPayments);
+        document.getElementById('currentBonusAccrual').textContent = formatCurrency(cumulativeBonusAccrual);
+        document.getElementById('verdeCrestNet').textContent = formatCurrency(totalVerdeRevenue - totalCASRevenue);
+        updateChart(results);
+        const tableBody = document.getElementById('revenue-tbody');
+        tableBody.innerHTML = '';
+        results.forEach(result => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${result.month}</td>
+            <td>${formatCurrency(result.verdeRevenue)}</td>
+            <td>${result.bonusActivated ? 'Yes' : 'No'}</td>
+            <td>${formatCurrency(result.basePayment)}</td>
+            <td>${formatCurrency(result.shortfall)}</td>
+            <td>${formatCurrency(result.cumulativeBonusAccrual)}</td>
+            <td>${formatCurrency(result.revenueAboveThreshold)}</td>
+            <td>${formatCurrency(result.bonusPayment)}</td>
+            <td>${formatCurrency(result.totalCASRevenue)}</td>
+            <td>${formatCurrency(result.verdeCrestNet)}</td>
+          `;
+          if (result.bonusPayment > 0) {
+            row.classList.add('highlight');
+          }
+          tableBody.appendChild(row);
+        });
+      }
+
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+      }
+
+      function addRandomVariation(baseValue, variationPercent = 10, maxValue = null) {
+        const variation = baseValue * (variationPercent / 100);
+        const randomAdjustment = (Math.random() * 2 - 1) * variation;
+        let result = Math.round((baseValue + randomAdjustment) / 500) * 500;
+        if (maxValue !== null && result > maxValue) {
+          result = maxValue;
+        }
+        return result;
+      }
+
+      function setRandomizedRevenues(basePattern, variationPercent = 10) {
+        const monthCount = parseInt(document.getElementById('monthCount').value);
+        if (monthCount !== document.getElementById('monthCount').value) {
+          document.getElementById('monthCount').value = monthCount;
+          generateMonthInputs();
+        }
+        const revenues = [];
+        for (let i = 0; i < monthCount; i++) {
+          if (i < basePattern.length) {
+            revenues.push(addRandomVariation(basePattern[i], variationPercent));
+          } else {
+            const lastIndex = basePattern.length - 1;
+            const baseValue = basePattern[lastIndex];
+            revenues.push(addRandomVariation(baseValue, variationPercent * 1.5));
+          }
+        }
+        revenues.forEach((value, index) => {
+          if (document.getElementById(`month${index+1}`)) {
+            document.getElementById(`month${index+1}`).value = value;
+          }
+        });
+        calculatePayments();
+      }
+
+      function loadScenario1() {
+        const basePattern = [20000, 25000, 29000, 35000, 50000, 75000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000, 500000];
+        setRandomizedRevenues(basePattern, 15);
+      }
+      function loadScenario2() {
+        const basePattern = [20000, 25000, 28000, 45000, 90000, 300000, 75000, 400000, 100000, 350000, 60000, 320000, 80000, 380000, 70000];
+        setRandomizedRevenues(basePattern, 20);
+      }
+      function loadScenario3() {
+        const basePattern = [25000, 29000, 40000, 35000, 45000, 30000, 55000, 25000, 60000, 20000, 40000, 15000, 50000, 10000, 45000];
+        setRandomizedRevenues(basePattern, 15);
+      }
+      function loadScenario4() {
+        const basePattern = [50000, 40000, 30000, 35000, 45000, 40000, 350000, 200000, 400000, 180000, 420000, 250000, 380000, 190000, 350000];
+        setRandomizedRevenues(basePattern, 18);
+      }
+      function loadScenario5() {
+        const bonusActivationThreshold = parseInt(document.getElementById('bonusActivationThreshold').value);
+        const maxRevenue = bonusActivationThreshold - 1000;
+        const basePattern = [20000, 23000, 22000, 25000, 24000, 26000, 25000, 24000, 26500, 25500, 26000, 27500, 26000, 27000, 26500];
+        const revenues = [];
+        const monthCount = parseInt(document.getElementById('monthCount').value);
+        for (let i = 0; i < monthCount; i++) {
+          if (i < basePattern.length) {
+            revenues.push(addRandomVariation(basePattern[i], 10, maxRevenue));
+          } else {
+            const lastIndex = basePattern.length - 1;
+            const baseValue = basePattern[lastIndex];
+            revenues.push(addRandomVariation(baseValue, 12, maxRevenue));
+          }
+        }
+        revenues.forEach((value, index) => {
+          if (document.getElementById(`month${index+1}`)) {
+            document.getElementById(`month${index+1}`).value = value;
+          }
+        });
+        calculatePayments();
+      }
+      function loadScenario6() {
+        const basePattern = [40000, 60000, 85000, 120000, 280000, 350000, 500000, 420000, 650000, 550000, 750000, 680000, 600000, 700000, 550000];
+        setRandomizedRevenues(basePattern, 15);
+      }
+      calculatePayments();
+      loadScenario4();
+    });
+  </script>
 </body>
 </html>
